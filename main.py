@@ -2,7 +2,7 @@ import numpy as np
 import time
 import slmpy
 from PIL import Image
-from vimba import *
+#from vimba import *
 
 slmWaiting = 0.02  #second
 step  = 30    # superpixels length  {10,15,20,30,60,120}   
@@ -24,6 +24,7 @@ ccd_initial=Image.fromarray(frame)
 ccd_initial.save("ccd_initial.jpeg")
 
 '''
+frame=0
 # getIntensity will be updated as getting real intensity from CCD 
 def getIntensity(frame,r1,r2,c1,c2):
     return np.random.rand()
@@ -58,7 +59,7 @@ time.sleep(slmWaiting)
 for r in range(0,row,step):
     for c in range(0,col,step):
         phase_i=slmPattern[r:(r+step):,c:(c+step):]
-        intensity=getIntensity(r1, r2, c1, c2)
+        intensity=getIntensity(frame,r1, r2, c1, c2)
         for ph in range(0,255,phase):
 
             slmPattern[r:(r+step):,c:(c+step):]=ph
