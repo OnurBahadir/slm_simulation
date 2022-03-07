@@ -4,7 +4,6 @@ import slmpy
 import cv2
 from vimba import *
 
-
 slmWaiting = 0.8  #seconds
 step  = 90    # superpixels length n X n {10,15,20,30,60,120}   
 phase = 30    # 0 - 255 
@@ -19,10 +18,16 @@ c2=800
 
 # getIntensity will be updated as getting real intensity from CCD 
 def getIntensity(r1,r2,c1,c2):
+    '''
     frame=Vimba.get_instance().get_all_cameras()[0].get_frame()
     frame=frame.convert_pixel_format(PixelFormat.Rgb8).as_numpy_ndarray()
-
-    return 0.299*np.mean(frame[r1:r2:,c1:c2:,0]) +0.587*np.mean(frame[r1:r2:,c1:c2:,1])+0.114*np.mean(frame[r1:r2:,c1:c2:,2])
+    '''
+    with Vimba.get_instance () as vimba :
+        cams = vimba.get_all_cameras ()
+        with cams [0] as cam:
+            frame = cam.get_frame ()
+            frame=frame.convert_pixel_format(PixelFormat.Rgb8).as_numpy_ndarray()
+            return 0.299*np.mean(frame[r1:r2:,c1:c2:,0]) +0.587*np.mean(frame[r1:r2:,c1:c2:,1])+0.114*np.mean(frame[r1:r2:,c1:c2:,2])
 
     #gray_=np.zeros((frame.shape[0],frame.shape[1]))
     #gray_+=0.299*frame[::,::,0]+0.587*frame[::,::,1]+0.114*frame[::,::,2]
@@ -33,12 +38,27 @@ def getIntensity(r1,r2,c1,c2):
 t1=time.time()  
 
 #Reading image from CCD
+
+with Vimba.get_instance () as vimba :
+    cams = vimba.get_all_cameras ()
+    with cams [0] as cam:
+        frame = cam.get_frame ()
+        frame=frame.convert_pixel_format(PixelFormat.Rgb8).as_numpy_ndarray()
+        ccd_init= cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
+        cv2.imwrite("ccd_init.jpeg",ccd_init)
+
+
+
+'''
 frame=Vimba.get_instance().get_all_cameras()[0].get_frame()
 frame=frame.convert_pixel_format(PixelFormat.Rgb8).as_numpy_ndarray()
 
 #save inital image from CCD
 ccd_init= cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
 cv2.imwrite("ccd_init.jpeg",ccd_init)
+'''
+
+
 
 
 #SLM initialize
@@ -86,12 +106,24 @@ for r in range(0,row,step):
 
 cv2.imwrite("slm_pattern_final.jpeg",slmPattern)
 
+
+with Vimba.get_instance () as vimba :
+    cams = vimba.get_all_cameras ()
+    with cams [0] as cam:
+        frame = cam.get_frame ()
+        frame=frame.convert_pixel_format(PixelFormat.Rgb8).as_numpy_ndarray()
+        ccd_final= cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
+        cv2.imwrite("ccd_final.jpeg",ccd_final)
+
+
+
+'''
 frame=Vimba.get_instance().get_all_cameras()[0].get_frame()
 frame=frame.convert_pixel_format(PixelFormat.Rgb8).as_numpy_ndarray()
 
 ccd_final= cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
 cv2.imwrite("ccd_final.jpeg",ccd_final)
-
+'''
 
 
 time.sleep(2)
