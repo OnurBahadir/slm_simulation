@@ -16,12 +16,12 @@ if system.GeVTLIsPresent:
     system.runFeatureCommand("GeVDiscoveryAllOnce")
     time.sleep(0.2)
 else:
-    print "GigE transport layer not found!"
+    print ("GigE transport layer not found!")
 
 #### list available cameras after enabling discovery
 camIds = vimba.getCameraIds()
 for cam in camIds:
-    print 'Camera ID:', cam
+    print ('Camera ID:', cam)
 
 #### shutdown Vimba
 vimba.shutdown()
